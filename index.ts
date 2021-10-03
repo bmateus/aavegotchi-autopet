@@ -1,8 +1,7 @@
 require('dotenv').config()
 
 import * as core from "@actions/core";
-import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 
 const RPC_ENDPOINT = "https://polygon-rpc.com";
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -12,7 +11,10 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
  *
  * https://polygonscan.com/address/0xfa7a3bb12848a7856dd2769cd763310096c053f1
  */
-const abi = ["function pet()"];
+const abi = [
+  "function pet()",
+  "function getLastInteraction() view returns (uint256)"
+];
 
 /*
  * Simple Aavegotchi Petter Contract Deployment on Polygon
@@ -36,10 +38,21 @@ provider.ready.then(async () => {
   try {
     const contract = new ethers.Contract(contractAddress, abi, provider);
     const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
+    const contractWithSigner = contract.connect(wallet);
     
+    const lastInteraction = await contractWithSigner.getLastInteraction();
+    console.log("last interaction at:", lastInteraction.toString());
+    const readyToPetTimeMs = lastInteraction.add(12 * 60 * 60).mul(1000);
+
+    if (Date.now() < readyToPetTimeMs )
+    {
+      console.log("Not time to pet yet...", (readyToPetTimeMs - Date.now())/1000,  "seconds remaining" );
+      return;
+    }
+
     const gasPrice = await provider.getGasPrice();
 
-    const tx = contract.connect(wallet).pet({
+    const tx = contractWithSigner.pet({
       gasLimit: 100000,
       gasPrice: gasPrice,
     });
