@@ -12,6 +12,7 @@ The Simple Aavegotchi petter lets you:
 
 The contract has a 'setTokens' function that allows you to set which gotchis to pet, this is mapped per sender address so anyone
 can use this contract to specify a list of gotchis to pet
+(https://polygonscan.com/address/0xa1cc069caa69ced0e0139201c2eb2d6d24c8f711#writeContract)
 
 You must approve the contract as a PetOperator for your gotchi. You can approve a new PetOperator for your gotchi via the [AavegotchiFacet](https://louper.dev/?address=0x86935F11C86623deC8a25696E1C19a8659CbF95d&network=polygon) (you'll need to call `setPetOperatorForAll` directly on the diamond contract `0x86935f11c86623dec8a25696e1c19a8659cbf95d` which can be done via [louper.dev](https://louper.dev/?address=0x86935F11C86623deC8a25696E1C19a8659CbF95d&network=polygon)).
 
